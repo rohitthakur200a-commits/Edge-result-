@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+  <meta name="description" content="Edge Institute Student Result System – Empowering Skills. Shaping Futures.">
+  <meta property="og:title" content="Edge Institute – Result Portal">
+  <meta property="og:description" content="Check your results instantly at Himachal's No.1 Computer Coaching Institute">
+  <meta property="og:image" content="https://i.ibb.co/n2mFHmx/edge-computer-centre-baddi-solan-computer-training-institutes-5839ev.jpg">
+  <meta property="og:type" content="website">
+  <title>Edge Institute | Result Portal</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="https://i.ibb.co/n2mFHmx/edge-computer-centre-baddi-solan-computer-training-institutes-5839ev.jpg">
+  <!-- jsPDF library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', 'Roboto', 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f0f9ff 0%, #e6f0fa 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* main container - fully responsive */
+    .app-container {
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.94);
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    /* header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: white;
+      border-bottom: 1px solid rgba(0, 102, 255, 0.1);
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .logo-img {
+      height: 50px;
+      width: auto;
+      object-fit: contain;
+      border-radius: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .logo-img:hover {
+      transform: scale(1.02);
+    }
+
+    .brand-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #0b3b5f, #1e6faf);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-badge {
+      background: #eef2ff;
+      padding: 0.25rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #0b5e9e;
+    }
+
+    /* hero section */
+    .hero-section {
+      text-align: center;
+      padding: 2rem 1rem 1.5rem;
+      background: linear-gradient(115deg, #ffffff 0%, #f8fdff 100%);
+    }
+
+    .typing-wrapper {
+      min-height: 110px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .dynamic-heading {
+      font-size: clamp(1.4rem, 6vw, 2.4rem);
+      font-weight: 800;
+      color: #0a2b44;
+      text-align: center;
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+
+    #typed-text {
+      background: linear-gradient(125deg, #0b3b5f, #1a7fcf);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      border-right: 3px solid #1e6faf;
+      padding-right: 5px;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .static-tagline {
+      font-size: 1.1rem;
+      color: #2c6e9e;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      margin-top: 0.5rem;
+    }
+
+    /* search section - critical mobile fixes */
+    .search-section {
+      padding: 0.5rem 1.5rem 2rem;
+      background: white;
+    }
+
+    .search-card {
+      max-width: 700px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 48px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0,0,0,0.03);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem 0.3rem 0.3rem 1.2rem;
+      border: 1px solid #dfe9f2;
+      transition: all 0.25s;
+    }
+
+    .search-card:focus-within {
+      box-shadow: 0 8px 22px rgba(0, 102, 255, 0.12);
+      border-color: #3b82f6;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      padding: 0.9rem 0;
+      font-size: 1rem;
+      background: transparent;
+      outline: none;
+      font-weight: 500;
+      color: #1a2c3e;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .search-input::placeholder {
+      color: #b9cfeb;
+      font-weight: 400;
+    }
+
+    .search-btn {
+      background: #1976d2;
+      border: none;
+      padding: 0.7rem 1.6rem;
+      border-radius: 40px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .search-btn:hover {
+      background: #0f5bb5;
+      transform: scale(0.97);
+    }
+
+    /* Mobile stacked layout */
+    @media (max-width: 640px) {
+      body {
+        padding: 0.5rem;
+      }
+      .header {
+        padding: 0.8rem 1rem;
+      }
+      .logo-img {
+        height: 42px;
+      }
+      .brand-name {
+        font-size: 1.2rem;
+      }
+      .search-section {
+        padding: 0.5rem 1rem 1.8rem;
+      }
+      .search-card {
+        flex-direction: column;
+        align-items: stretch;
+        border-radius: 36px;
+        padding: 0.8rem;
+        gap: 0.8rem;
+        background: white;
+      }
+      .search-input {
+        padding: 0.9rem 0.8rem;
+        background: #f9fafc;
+        border-radius: 60px;
+        border: 1px solid #e2edf2;
+        width: 100%;
+        text-align: left;
+      }
+      .search-btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        padding: 0.8rem;
+        white-space: normal;
+        font-size: 1rem;
+      }
+      .search-card:focus-within {
+        box-shadow: none;
+      }
+      .search-input:focus {
+        border-color: #1976d2;
+        background: white;
+      }
+      .result-area {
+        padding: 0 1rem 1.5rem;
+      }
+      .result-card {
+        padding: 1.2rem;
+      }
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+      .detail-label {
+        min-width: 100px;
+      }
+    }
+
+    /* Desktop side-by-side */
+    @media (min-width: 641px) {
+      .search-card {
+        flex-direction: row;
+      }
+      .search-input {
+        flex: 1;
+      }
+      .search-btn {
+        width: auto;
+      }
+    }
+
+    /* result card styling */
+    .result-area {
+      padding: 0 1.8rem 2.5rem;
+    }
+
+    .result-card {
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.12);
+      padding: 1.8rem;
+      transition: all 0.3s ease;
+      animation: fadeSlideUp 0.45s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      border: 1px solid rgba(59,130,246,0.2);
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    @keyframes fadeSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-bottom: 2px solid #eef2ff;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      gap: 0.8rem;
+    }
+
+    .result-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1e5f8e, #1170c0);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .download-btn {
+      background: #1e6faf;
+      border: none;
+      padding: 0.6rem 1.3rem;
+      border-radius: 40px;
+      font-weight: 600;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: 0.2s;
+    }
+
+    .download-btn:hover {
+      background: #0b5a92;
+      transform: translateY(-2px);
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem 1.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.5rem;
+      border-bottom: 1px dashed #e9f0f5;
+      padding-bottom: 0.6rem;
+    }
+
+    .detail-label {
+      font-weight: 700;
+      color: #1f4e7a;
+      min-width: 110px;
+      font-size: 0.9rem;
+      letter-spacing: -0.2px;
+    }
+
+    .detail-value {
+      color: #1e2f3e;
+      font-weight: 500;
+      word-break: break-word;
+      font-size: 0.95rem;
+    }
+
+    .status-badge {
+      background: #e6f7ec;
+      color: #2b7e3a;
+      padding: 0.2rem 1rem;
+      border-radius: 30px;
+      font-weight: 600;
+      display: inline-block;
+      font-size: 0.8rem;
+    }
+
+    .error-message {
+      background: #fff4f0;
+      border-left: 6px solid #e2583e;
+      padding: 1rem;
+      border-radius: 1.2rem;
+      color: #b13e26;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .info-message {
+      background: #eef2ff;
+      border-left: 6px solid #1976d2;
+      padding: 1rem;
+      border-radius: 1.2rem;
+      color: #1f4e7a;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .loading-spinner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 2rem;
+      color: #2c7ab1;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid #cfe2ff;
+      border-top-color: #1976d2;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 1.2rem;
+      background: #f9fcff;
+      border-top: 1px solid #e2edf7;
+      color: #54708f;
+      font-size: 0.8rem;
+    }
+
+    /* No horizontal overflow */
+    img, .app-container, .search-card, .result-card, .header, .hero-section, .footer {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    body {
+      overflow-x: hidden;
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <div class="logo-area">
+      <img class="logo-img" src="https://i.ibb.co/n2mFHmx/edge-computer-centre-baddi-solan-computer-training-institutes-5839ev.jpg" alt="Edge Institute Logo">
+      <span class="brand-name">Edge Institute</span>
+      <span class="brand-badge">Reg. Under HPSRA Act 2006</span>
+    </div>
+    <div class="brand-badge">Himachal No.1</div>
+  </div>
+
+  <div class="hero-section">
+    <div class="typing-wrapper">
+      <h1 class="dynamic-heading">
+        <span id="typed-text"></span><span class="cursor-blink" style="font-weight: 600;">|</span>
+      </h1>
+      <div class="static-tagline">Empowering Skills. Shaping Futures.</div>
+    </div>
+  </div>
+
+  <div class="search-section">
+    <div class="search-card">
+      <input type="text" id="rollInput" class="search-input" placeholder="Enter Roll Number e.g., 101 or 2024CS01" autocomplete="off">
+      <button id="searchBtn" class="search-btn">Get Result</button>
+    </div>
+  </div>
+
+  <div class="result-area" id="resultArea">
+    <div id="resultContainer"></div>
+  </div>
+
+  <div class="footer">
+    (c) 2025 Edge Institute – Empowering Digital Careers | Baddi, Himachal Pradesh
+  </div>
+</div>
+
+<script>
+  // ------------- FIXED CSV PARSING & SEARCH LOGIC -------------
+  let masterStudentData = [];
+  let isDataLoaded = false;
+  let dataLoadAttempted = false;
+
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/1sOxW0BpHHy41FisgwXHuTTXXRqCaVuIXHU-_mlJgW54/export?format=csv";
+
+  // Advanced CSV row parser that handles commas inside quoted values
+  function parseCSVRowAdvanced(rowStr) {
+    const result = [];
+    let inQuotes = false;
+    let current = '';
+    for (let i = 0; i < rowStr.length; i++) {
+      const ch = rowStr[i];
+      if (ch === '"') {
+        inQuotes = !inQuotes;
+      } else if (ch === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    result.push(current.trim());
+    // Remove surrounding quotes if present
+    return result.map(cell => cell.replace(/^"|"$/g, '').trim());
+  }
+
+  // Parse full CSV text into array of objects
+  function parseCSVToObjects(csvText) {
+    const lines = csvText.trim().split(/\r?\n/);
+    if (lines.length < 2) {
+      console.warn("CSV has less than 2 rows");
+      return [];
+    }
+    
+    // Parse headers: first row, normalize to lowercase and trim
+    const rawHeaders = parseCSVRowAdvanced(lines[0]);
+    const headers = rawHeaders.map(h => h.toLowerCase().trim());
+    console.log("Detected Headers:", headers);
+    
+    const students = [];
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line === "") continue;
+      const values = parseCSVRowAdvanced(line);
+      const studentObj = {};
+      headers.forEach((header, idx) => {
+        let val = (idx < values.length) ? values[idx] : "";
+        studentObj[header] = val;
+      });
+      students.push(studentObj);
+    }
+    console.log(`Parsed ${students.length} student records`);
+    return students;
+  }
+
+  // Fetch CSV from Google Sheet
+  async function fetchStudentData() {
+    const container = document.getElementById("resultContainer");
+    if (!container) return;
+    
+    // Show loading only if no data yet and not attempted
+    if (!isDataLoaded && !dataLoadAttempted) {
+      container.innerHTML = `<div class="loading-spinner"><div class="spinner"></div><span>Loading student records...</span></div>`;
+    }
+    dataLoadAttempted = true;
+    
+    try {
+      const response = await fetch(CSV_URL);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const csvText = await response.text();
+      console.log("CSV fetched, length:", csvText.length);
+      
+      if (!csvText || csvText.trim().length === 0) {
+        throw new Error("CSV file is empty");
+      }
+      
+      const parsedStudents = parseCSVToObjects(csvText);
+      if (parsedStudents.length === 0) {
+        container.innerHTML = `<div class="error-message">No student data available in CSV. Please check the sheet.</div>`;
+        masterStudentData = [];
+        isDataLoaded = false;
+        return;
+      }
+      
+      masterStudentData = parsedStudents;
+      isDataLoaded = true;
+      console.log("Student data ready. Sample:", masterStudentData.slice(0, 2));
+      
+      // Show ready state
+      container.innerHTML = `<div class="info-message">Enter Roll Number to view result</div>`;
+    } catch (err) {
+      console.error("Fetch/Parse error:", err);
+      container.innerHTML = `<div class="error-message">Unable to load data: ${err.message}. Please refresh or try later.</div>`;
+      isDataLoaded = false;
+      masterStudentData = [];
+    }
+  }
+
+  // Find student by roll number with flexible field matching
+  function findStudentByRoll(rollNumberRaw) {
+    if (!masterStudentData.length) {
+      console.log("No student data loaded");
+      return null;
+    }
+    
+    const searchRoll = String(rollNumberRaw).trim();
+    console.log(`Searching for roll: "${searchRoll}"`);
+    
+    // Possible column names for roll number (case-insensitive already normalized to lower)
+    const possibleRollFields = ["roll number", "rollno", "roll", "roll_no", "enrollment"];
+    
+    for (let student of masterStudentData) {
+      for (let field of possibleRollFields) {
+        const fieldValue = student[field];
+        if (fieldValue !== undefined && fieldValue !== null) {
+          const normalizedFieldValue = String(fieldValue).trim();
+          if (normalizedFieldValue === searchRoll) {
+            console.log(`Match found using field: ${field} = ${normalizedFieldValue}`);
+            return student;
+          }
+        }
+      }
+      // Also check any field that might contain "roll" in its name as fallback
+      for (let key in student) {
+        if (key.includes("roll") && student[key] && String(student[key]).trim() === searchRoll) {
+          console.log(`Fallback match using key: ${key} = ${student[key]}`);
+          return student;
+        }
+      }
+    }
+    console.log("No match found for roll:", searchRoll);
+    return null;
+  }
+
+  // Escape HTML
+  function escapeHtml(str) {
+    if (!str) return "";
+    return String(str).replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  // Render dynamic result card from student object (shows ALL fields)
+  function renderResultCard(student) {
+    if (!student) return null;
+    const cardDiv = document.createElement("div");
+    cardDiv.className = "result-card";
+    
+    cardDiv.innerHTML = `
+      <div class="result-header">
+        <div class="result-title">Result Summary</div>
+        <button class="download-btn" id="pdfDownloadBtn">Download as PDF</button>
+      </div>
+      <div class="details-grid" id="dynamicFieldsGrid"></div>
+    `;
+    
+    const gridContainer = cardDiv.querySelector("#dynamicFieldsGrid");
+    // Loop through all key-value pairs dynamically
+    const entries = Object.entries(student);
+    if (entries.length === 0) {
+      gridContainer.innerHTML = '<div class="error-message">No fields available</div>';
+    } else {
+      entries.forEach(([key, value]) => {
+        if (value === undefined || value === null) value = "—";
+        const displayValue = value === "" ? "—" : value;
+        const isStatusField = key.toLowerCase().includes("status");
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "detail-item";
+        if (isStatusField) {
+          itemDiv.innerHTML = `
+            <div class="detail-label">${escapeHtml(key)} :</div>
+            <span class="status-badge">${escapeHtml(displayValue)}</span>
+          `;
+        } else {
+          itemDiv.innerHTML = `
+            <div class="detail-label">${escapeHtml(key)} :</div>
+            <span class="detail-value">${escapeHtml(displayValue)}</span>
+          `;
+        }
+        gridContainer.appendChild(itemDiv);
+      });
+    }
+    
+    // PDF download event
+    const pdfBtn = cardDiv.querySelector("#pdfDownloadBtn");
+    if (pdfBtn) {
+      pdfBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        generatePDFForStudent(student);
+      });
+    }
+    return cardDiv;
+  }
+
+  // Generate PDF using jsPDF
+  function generatePDFForStudent(student) {
+    if (!student) return;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 15;
+    let y = 20;
+    
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(25, 70, 120);
+    doc.text("Edge Institute – Himachal No.1 Computer Coaching", pageWidth / 2, y, { align: "center" });
+    y += 8;
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(80, 100, 130);
+    doc.text("Empowering Skills. Shaping Futures.", pageWidth / 2, y, { align: "center" });
+    y += 10;
+    doc.setDrawColor(80, 140, 210);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 8;
+    
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(20, 80, 140);
+    doc.text("STUDENT RESULT CARD", pageWidth / 2, y, { align: "center" });
+    y += 10;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    
+    const entries = Object.entries(student);
+    let currentY = y;
+    for (let i = 0; i < entries.length; i++) {
+      const [key, val] = entries[i];
+      let value = val || "—";
+      doc.setFont("helvetica", "bold");
+      doc.text(`${key}: `, margin, currentY);
+      doc.setFont("helvetica", "normal");
+      const valueLines = doc.splitTextToSize(String(value), pageWidth - margin - 45);
+      doc.text(valueLines, margin + 35, currentY);
+      currentY += 7;
+      if (currentY > 270) {
+        doc.addPage();
+        currentY = 20;
+      }
+    }
+    
+    const finalY = (currentY + 12 > 280) ? 280 : currentY + 12;
+    doc.setFontSize(9);
+    doc.setTextColor(100, 100, 120);
+    doc.text("Edge Institute · Baddi, Himachal Pradesh", pageWidth / 2, finalY, { align: "center" });
+    const studentRoll = student["roll number"] || student["rollno"] || student["roll"] || "student";
+    doc.save(`Edge_Result_${studentRoll}.pdf`);
+  }
+
+  // Main search action
+  async function searchResult() {
+    const rollInput = document.getElementById("rollInput");
+    const rollValue = rollInput.value.trim();
+    const resultContainer = document.getElementById("resultContainer");
+    
+    if (!rollValue) {
+      resultContainer.innerHTML = `<div class="error-message">Please enter a Roll Number to search.</div>`;
+      return;
+    }
+    
+    // Ensure data is loaded
+    if (!isDataLoaded && masterStudentData.length === 0) {
+      resultContainer.innerHTML = `<div class="loading-spinner"><div class="spinner"></div><span>Loading data, please wait...</span></div>`;
+      await fetchStudentData();
+      if (!isDataLoaded || masterStudentData.length === 0) {
+        resultContainer.innerHTML = `<div class="error-message">Unable to load data. Please refresh or try later.</div>`;
+        return;
+      }
+    }
+    
+    // Additional safety: if data is empty after load
+    if (masterStudentData.length === 0) {
+      resultContainer.innerHTML = `<div class="error-message">No student records available. Contact administrator.</div>`;
+      return;
+    }
+    
+    const matchedStudent = findStudentByRoll(rollValue);
+    if (!matchedStudent) {
+      resultContainer.innerHTML = `<div class="error-message">Result not found for Roll Number: "${escapeHtml(rollValue)}". Please verify and try again.</div>`;
+      return;
+    }
+    
+    // Render the result card with animation
+    const cardElement = renderResultCard(matchedStudent);
+    resultContainer.innerHTML = "";
+    resultContainer.appendChild(cardElement);
+  }
+
+  // ------------- TYPING ANIMATION -------------
+  const fullHeadingText = "Edge Institute – Edge Institute Reg.Under HPSRA Act 2006";
+  let typedIndex = 0;
+  let isDeleting = false;
+  let timeoutId = null;
+  const typedSpan = document.getElementById("typed-text");
+  
+  function typeEffect() {
+    if (!typedSpan) return;
+    const currentText = fullHeadingText.substring(0, typedIndex);
+    typedSpan.textContent = currentText;
+    
+    if (!isDeleting && typedIndex < fullHeadingText.length) {
+      typedIndex++;
+      timeoutId = setTimeout(typeEffect, 80);
+    } 
+    else if (isDeleting && typedIndex > 0) {
+      typedIndex--;
+      timeoutId = setTimeout(typeEffect, 45);
+    }
+    else if (!isDeleting && typedIndex === fullHeadingText.length) {
+      isDeleting = true;
+      timeoutId = setTimeout(typeEffect, 1800);
+    }
+    else if (isDeleting && typedIndex === 0) {
+      isDeleting = false;
+      timeoutId = setTimeout(typeEffect, 500);
+    }
+  }
+
+  // ---------- INITIALIZE ----------
+  window.addEventListener("DOMContentLoaded", () => {
+    typeEffect();
+    fetchStudentData(); // load data on page start
+    const searchBtn = document.getElementById("searchBtn");
+    const rollInput = document.getElementById("rollInput");
+    searchBtn.addEventListener("click", searchResult);
+    rollInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") searchResult();
+    });
+  });
+  
+  // Optional: Reload data if needed on error recovery
+  window.addEventListener("load", () => {
+    if (!isDataLoaded && !dataLoadAttempted) {
+      fetchStudentData();
+    }
+  });
+</script>
+</body>
+</html>
